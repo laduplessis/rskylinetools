@@ -69,20 +69,28 @@ getSampleTraces <- function(true_t, true_N, nsamples=10, dimension=5, noise_sd=5
 
 
 #' @export
-getChangeTimes <- function(trees, groupsizes) {
+getChangeTimes <- function(trees, groupsizes, eventtypes="coalescent") {
 
   if (nrow(groupsizes) != length(trees)) stop("Error! Different number of trees to number of states in log file")
 
   # Calculate change-point times from logged trees and logged group sizes
   changetimes <- matrix(0,ncol=ncol(groupsizes),nrow=nrow(groupsizes))
   for (i in 1:nrow(groupsizes)) {
-    events         <- TreeSim::getx(trees[[i]],sersampling=1)
-    coaltimes      <- sort(events[which(events[,2] == 1),1])
-    samplingtimes  <- sort(events[which(events[,2] == 0),1])
-    eventtimes     <- sort(c(samplingtimes, coaltimes))
+    events          <- beastio::getTreeIntervals(trees[[i]])
+    coaltimes       <- events$heights[events$types == "coalescent"]
+    samplingtimes   <- events$heights[events$types == "sample"]
+    eventtimes      <- events$heights
 
     groupshifts     <- cumsum(simplify2array(groupsizes[i,]))
-    changetimes[i,] <- coaltimes[groupshifts]
+
+    if (eventtypes == "coalescent") {
+        changetimes[i,] <- coaltimes[groupshifts]
+    } else
+    if (eventtypes == "sampling") {
+        changetimes[i,] <- samplingtimes[groupshifts]
+    } else {
+        changetimes[i,] <- eventtimes[groupshifts]
+    }
   }
 
   return(changetimes)

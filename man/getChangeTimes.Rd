@@ -7,7 +7,7 @@
         times     = m x n matrix
         gridtimes = n-dim vector}
 \usage{
-getChangeTimes(trees, groupsizes)
+getChangeTimes(trees, groupsizes, eventtypes = "coalescent")
 }
 \description{
 Case 1a:
