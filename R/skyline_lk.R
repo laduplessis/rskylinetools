@@ -22,7 +22,13 @@ mapGroups <- function(intervals, groupSizes, eventTypes) {
 
 
 #' Generalized Skyline Plot log-likelihood
-skyline_lk <- function(tree, segmentSizes, popSizes) {
+#'
+#' @export
+skyline_lk <- function(tree, popSizes, segmentSizes=NULL, full=TRUE) {
+
+  if (is.null(segmentSizes)) {
+      segmentSizes <- rep(1, tree$Nnode)
+  }
 
   intervals       <- getTreeIntervals(tree)
   intervals$group <- mapGroups(intervals, segmentSizes, "coalescent")
@@ -34,7 +40,10 @@ skyline_lk <- function(tree, segmentSizes, popSizes) {
 
       lk    <- lk - (intervals$length[i]*alpha)/N
       if (intervals$nodetype[i] == "coalescent") {
-          lk <- lk + log(alpha) - log(N)
+          lk <- lk - log(N)
+          if (full) {
+              lk <- lk + log(alpha)
+          }
       }
   }
 
@@ -42,6 +51,8 @@ skyline_lk <- function(tree, segmentSizes, popSizes) {
 }
 
 #' Epoch Sampling Skyline Plot log-likelihood
+#'
+#' @export
 esp_lk <- function(tree, segmentSizes, popSizes, epochSizes, sampIntensities) {
 
   intervals         <- getTreeIntervals(tree)
@@ -56,7 +67,10 @@ esp_lk <- function(tree, segmentSizes, popSizes, epochSizes, sampIntensities) {
 
     lk    <- lk - intervals$length[i]*(beta*N - alpha/N)
     if (intervals$nodetype[i] == "coalescent") {
-      lk <- lk + log(alpha) - log(N)
+      lk <- lk - log(N)
+      if (full) {
+          lk <- lk + log(alpha)
+      }
     } else
     if (intervals$nodetype[i] == "sample") {
       lk <- lk + log(beta*N)
@@ -67,20 +81,20 @@ esp_lk <- function(tree, segmentSizes, popSizes, epochSizes, sampIntensities) {
 }
 
 
-intervals <- getTreeIntervals(tree)
-groupSizes <- c(2,2,2,2,3)
-groupTypes <- c("sample", "coalescent")
-intervals$group <- mapGroups(intervals, groupSizes, groupTypes)
-
-groupSizes <- c(1,1,1,1,2)
-groupTypes <- c("coalescent")
-intervals$group <- mapGroups(intervals, groupSizes, groupTypes)
-
-
-groupSizes <- c(1,1,1,1,1,1)
-groupTypes <- c("sample")
-intervals$group <- mapGroups(intervals, groupSizes, groupTypes)
-
-tree.test <- read.tree(text = "((D4Philip56:30.0,(D4Philip64:23.0,D4Philip84:23.0):7.0):10.0,(D4SLanka78:25.0,(D4Thai78:11.0,D4Thai84:11.0):14.0):15.0);") # load tree
-sk1 <- skyline(tree.test)
-cat(sprintf("%.12f", sk1$logL))
+# intervals <- getTreeIntervals(tree)
+# groupSizes <- c(2,2,2,2,3)
+# groupTypes <- c("sample", "coalescent")
+# intervals$group <- mapGroups(intervals, groupSizes, groupTypes)
+#
+# groupSizes <- c(1,1,1,1,2)
+# groupTypes <- c("coalescent")
+# intervals$group <- mapGroups(intervals, groupSizes, groupTypes)
+#
+#
+# groupSizes <- c(1,1,1,1,1,1)
+# groupTypes <- c("sample")
+# intervals$group <- mapGroups(intervals, groupSizes, groupTypes)
+#
+# tree.test <- read.tree(text = "((D4Philip56:30.0,(D4Philip64:23.0,D4Philip84:23.0):7.0):10.0,(D4SLanka78:25.0,(D4Thai78:11.0,D4Thai84:11.0):14.0):15.0);") # load tree
+# sk1 <- skyline(tree.test)
+# cat(sprintf("%.12f", sk1$logL))
