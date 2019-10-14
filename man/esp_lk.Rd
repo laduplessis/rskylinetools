@@ -4,7 +4,8 @@
 \alias{esp_lk}
 \title{Epoch Sampling Skyline Plot log-likelihood}
 \usage{
-esp_lk(tree, segmentSizes, popSizes, epochSizes, sampIntensities)
+esp_lk(tree, popSizes, segmentSizes = NULL, sampIntensities,
+  epochSizes = NULL, full = TRUE)
 }
 \description{
 Epoch Sampling Skyline Plot log-likelihood

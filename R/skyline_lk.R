@@ -51,21 +51,21 @@ skyline_lk <- function(tree, popSizes, segmentSizes=NULL, full=TRUE) {
 }
 
 skyline_ml <- function(tree, segmentSizes=NULL) {
-  
+
   if (is.null(segmentSizes)) {
     segmentSizes <- rep(1, tree$Nnode)
   }
-  
+
   intervals       <- beastio::getTreeIntervals(tree)
   intervals$group <- mapGroups(intervals, segmentSizes, "coalescent")
-  
+
   popSizes <- rep(0, length(segmentSizes))
   for (i in 1:length(popSizes)) {
       sub   <- (intervals$group == i)
       width <- sum(intervals$length[sub])
       n     <- max(intervals$nlineages[sub])
       k     <- segmentSizes[i]
-      
+
       popSizes[i] <- width*n*(n-k)/(2*k)
   }
   return(popSizes)
@@ -81,7 +81,7 @@ esp_lk <- function(tree, popSizes, segmentSizes=NULL, sampIntensities, epochSize
   }
 
   if (is.null(epochSizes)) {
-    segmentSizes <- rep(1, length(tree$tip.label))
+    epochSizes <- length(tree$tip.label)
   }
 
   intervals         <- beastio::getTreeIntervals(tree)

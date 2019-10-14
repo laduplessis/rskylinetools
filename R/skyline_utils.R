@@ -77,9 +77,9 @@ getChangeTimes <- function(trees, groupsizes, eventtypes="coalescent") {
   changetimes <- matrix(0,ncol=ncol(groupsizes),nrow=nrow(groupsizes))
   for (i in 1:nrow(groupsizes)) {
     events          <- beastio::getTreeIntervals(trees[[i]])
-    coaltimes       <- events$heights[events$types == "coalescent"]
-    samplingtimes   <- events$heights[events$types == "sample"]
-    eventtimes      <- events$heights
+    coaltimes       <- events$height[events$nodetype == "coalescent"]
+    samplingtimes   <- events$height[events$nodetype == "sample"]
+    eventtimes      <- events$height
 
     groupshifts     <- cumsum(simplify2array(groupsizes[i,]))
 
